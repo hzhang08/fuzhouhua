@@ -1,5 +1,6 @@
 var globalIndex = 0;
 var fuzhou1Json = null;
+var player = null;
 
 function search() {
 
@@ -36,6 +37,7 @@ function init() {
 
         } else {
             alert(result.content);
+            generatePlayer();
             globalIndex = result.index;
         }
     });
@@ -59,4 +61,15 @@ function keywordSearch (index, keyword) {
     }
 
     return null;
+}
+
+
+function generatePlayer() {
+    // 2. This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
 }
