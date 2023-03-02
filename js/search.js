@@ -1,15 +1,27 @@
-var globalIndex = 0;
-var fuzhou1Json = null;
 
-var player = null;
-var videoIdExternal = null;
-var globalStartSeconds = -1; //since at one time, one page can only have one start time, so it is a global state
+var vue = new Vue({
+    el: "#main-container",
+    data: {
+        globalIndex: 0,
+        fuzhou1Json: null,
+        player: null,
+        videoIdExternal: null,
+        globalStartSeconds: -1
+    },
+    methods: {
+        search: function() {
+
+            init();
+            
+        }
+    }
+});
 
 function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
+    vue.player = new YT.Player('player', {
         height: '390',
         width: '640',
-        videoId: videoIdExternal,
+        videoId: vue.videoIdExternal,
         playerVars: {
         'playsinline': 1
         },
@@ -21,18 +33,11 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerReady(event) {
 
-    player.loadVideoById("zZWsAze9iVI", globalStartSeconds);
-    player.playVideo();
+    vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+    vue.player.playVideo();
 }
 
-function search() {
 
-    init();
-    
-
-    // alert("index is " + searchterm + index);
-    // index += 1;
-}
 
 function init() {
     // const fs = require('fs');
@@ -46,13 +51,13 @@ function init() {
     fetch('./fuzhou1.json')
     .then((response) => response.json())
     .then((json) => {
-        fuzhou1Json = json;
+        vue.fuzhou1Json = json;
         let searchterm = document.getElementById("searchbox").value;
 
-        var result = keywordSearch(globalIndex, searchterm);
-        if (result == null && globalIndex > 0) { //loop back to beginning
-            globalIndex = 0;
-            result = keywordSearch(globalIndex, searchterm);
+        var result = keywordSearch(vue.globalIndex, searchterm);
+        if (result == null && vue.globalIndex > 0) { //loop back to beginning
+            vue.globalIndex = 0;
+            result = keywordSearch(vue.globalIndex, searchterm);
         }
 
         if (result == null) {
@@ -60,21 +65,21 @@ function init() {
 
         } else {
             alert(result.content);
-            globalStartSeconds = convertToSeconds(result.start);
-            alert("start second is:" + globalStartSeconds);
+            vue.globalStartSeconds = convertToSeconds(result.start);
+            alert("start second is:" + vue.globalStartSeconds);
             
             //player.reload
-            if (player == null) { //player has not been created
-                videoIdExternal = "zZWsAze9iVI";
+            if (vue.player == null) { //player has not been created
+                vue.videoIdExternal = "zZWsAze9iVI";
                 generatePlayer();
             } else {//player was not there or was already there
       
-                player.loadVideoById("zZWsAze9iVI", globalStartSeconds);
-                player.playVideo();
+                vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+                vue.player.playVideo();
             
             }
             
-            globalIndex = result.index;
+            vue.globalIndex = result.index;
         }
     });
 
@@ -82,11 +87,11 @@ function init() {
 
 function keywordSearch (index, keyword) {
 
-    if(fuzhou1Json == null || fuzhou1Json.length <= index) {
+    if(vue.fuzhou1Json == null || vue.fuzhou1Json.length <= index) {
         return null;
     }
 
-    let searchArr = fuzhou1Json.slice(index); // slice starting from the index
+    let searchArr = vue.fuzhou1Json.slice(index); // slice starting from the index
 
     for (let i = index; i < searchArr.length; i++) { // looping through the json array starting from index
         let contentStr = searchArr[i].content; 
