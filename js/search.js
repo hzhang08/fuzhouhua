@@ -6,7 +6,8 @@ var vue = new Vue({
         fuzhou1Json: null,
         player: null,
         videoIdExternal: null,
-        globalStartSeconds: -1
+        globalStartSeconds: -1,
+        subtitle: null
     },
     methods: {
         search: function() {
@@ -61,10 +62,13 @@ function init() {
         }
 
         if (result == null) {
+            vue.subtitle = null;
             alert("the search keyword: " + searchterm + " is not found!");
 
         } else {
             alert(result.content);
+
+            vue.subtitle = result.content;
             vue.globalStartSeconds = convertToSeconds(result.start);
             alert("start second is:" + vue.globalStartSeconds);
             
