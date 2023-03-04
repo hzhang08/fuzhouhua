@@ -7,7 +7,8 @@ var vue = new Vue({
         player: null,
         videoIdExternal: null,
         globalStartSeconds: -1,
-        subtitle: null
+        subtitle: null, //deprecating this
+        subtitleHtml: null
     },
     methods: {
         search: function() {
@@ -62,15 +63,16 @@ function init() {
         }
 
         if (result == null) {
-            vue.subtitle = null;
+            vue.subtitleHtml = null;
             alert("the search keyword: " + searchterm + " is not found!");
 
         } else {
-            alert(result.content);
 
-            vue.subtitle = result.content;
+            let subtitleArray = splitStringByKeyword(result.content, searchterm);
+
+            vue.subtitleHtml = concatenateObjectsToString(subtitleArray);
+
             vue.globalStartSeconds = convertToSeconds(result.start);
-            alert("start second is:" + vue.globalStartSeconds);
             
             //player.reload
             if (vue.player == null) { //player has not been created
@@ -125,3 +127,49 @@ function convertToSeconds(t) {
     let secs = parseInt(t.split(':')[2], 10);
     return hrs * 3600 + mins * 60 + secs;
 };
+
+function splitStringByKeyword(sourceString, keyword) {
+    let splitArray = [];
+    let index = 0;
+  
+    while (index < sourceString.length) {
+      let currentText = "";
+      let currentIsKey = false;
+  
+      if (sourceString.slice(index, index + keyword.length) === keyword) {
+        currentText = keyword;
+        currentIsKey = true;
+        index += keyword.length;
+      } else {
+        currentText += sourceString[index];
+  
+        let nextIndex = index + 1;
+        while (nextIndex < sourceString.length && sourceString.slice(nextIndex, nextIndex + keyword.length) !== keyword) {
+          currentText += sourceString[nextIndex];
+          nextIndex += 1;
+        }
+  
+        index = nextIndex;
+      }
+  
+      splitArray.push({ text: currentText, isKey: currentIsKey });
+    }
+  
+    return splitArray;
+  }
+  
+  function concatenateObjectsToString(array) {
+    let resultString = "";
+  
+    for (let i = 0; i < array.length; i++) {
+      const object = array[i];
+      if (object.isKey) {
+        resultString += `<p class="bg-danger text-white fs-1">${object.text}</p>`;
+      } else {
+        resultString += object.text;
+      }
+    }
+  
+    return resultString;
+  }
+  
