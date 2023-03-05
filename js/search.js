@@ -15,6 +15,12 @@ var vue = new Vue({
 
             init();
             
+        },
+        replay: function() {
+            if (vue.globalStartSeconds >= 0) {
+                vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+                vue.player.playVideo();
+            }
         }
     }
 });
