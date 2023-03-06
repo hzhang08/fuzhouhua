@@ -12,7 +12,7 @@ var vue = new Vue({
     },
     methods: {
         search: function() {
-
+            vue.globalIndex = 0;
             init();
             
         },
@@ -21,7 +21,14 @@ var vue = new Vue({
                 vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
                 vue.player.playVideo();
             }
+        },
+        next: function() {
+            init();
+        }, 
+        previous: function() {
+
         }
+        
     }
 });
 
