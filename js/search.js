@@ -177,7 +177,7 @@ function splitStringByKeyword(sourceString, keyword) {
     for (let i = 0; i < array.length; i++) {
       const object = array[i];
       if (object.isKey) {
-        resultString += `<p class="bg-danger text-white fs-1">${object.text}</p>`;
+        resultString += `<p class="bg-danger text-white fs-3">${object.text}</p>`;
       } else {
         resultString += object.text;
       }
