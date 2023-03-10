@@ -81,14 +81,15 @@ function init() {
         let searchterm = document.getElementById("searchbox").value;
 
         if(historyStack.isEmpty()) {
-            historyStack.push(0);
+            // we want to start searching from 0, so we push -1 to the stack
+            historyStack.push(-1);
         }
 
         var result = keywordSearch(historyStack.peek(), searchterm);
         if (result == null && historyStack.peek() > 0) { //loop back to beginning
 
             historyStack.doPurge(); //clear the stack, so not to allow user to go back to the previous loop
-            historyStack.push(0);  
+            historyStack.push(-1);  
             result = keywordSearch(historyStack.peek(), searchterm);
         }
 
@@ -123,13 +124,16 @@ function init() {
 
 function keywordSearch (index, keyword) {
 
+    //the assumption should be, index is previously searched index, so searching starting from the next index
+    //for initial search, index should be -1, so we start from 0
+
     if(vue.fuzhou1Json == null || vue.fuzhou1Json.length <= index) {
         return null;
     }
 
-    let searchArr = vue.fuzhou1Json.slice(index); // slice starting from the index
+    let searchArr = vue.fuzhou1Json.slice(index+1); // slice starting from the index
 
-    for (let i = index; i < searchArr.length; i++) { // looping through the json array starting from index
+    for (let i = 0; i < searchArr.length; i++) { // looping through the json array starting from index
         let contentStr = searchArr[i].content; 
         // checking if the search keyword exists in the content string
         if (contentStr.includes(keyword)) {
