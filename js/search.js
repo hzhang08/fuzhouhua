@@ -2,7 +2,6 @@
 var vue = new Vue({
     el: "#main-container",
     data: {
-        globalIndex: 0,
         fuzhou1Json: null,
         player: null,
         videoIdExternal: null,
@@ -12,7 +11,7 @@ var vue = new Vue({
     },
     methods: {
         search: function() {
-            vue.globalIndex = 0;
+            historyStack.doPurge();
             init();
             
         },
@@ -26,7 +25,19 @@ var vue = new Vue({
             init();
         }, 
         previous: function() {
-
+            if(historyStack.isEmpty() || historyStack.peek() == 0) {
+              //if the stack is empty or the current index is 0, then there is no previous search
+                return;
+            }
+            historyStack.pop(); //pop the current search
+            if(historyStack.isEmpty()) {
+                return;
+            }
+            historyStack.pop(); //pop the previous search
+            init();
+        },
+        pause: function() {
+            vue.player.pauseVideo();
         }
         
     }
@@ -69,10 +80,16 @@ function init() {
         vue.fuzhou1Json = json;
         let searchterm = document.getElementById("searchbox").value;
 
-        var result = keywordSearch(vue.globalIndex, searchterm);
-        if (result == null && vue.globalIndex > 0) { //loop back to beginning
-            vue.globalIndex = 0;
-            result = keywordSearch(vue.globalIndex, searchterm);
+        if(historyStack.isEmpty()) {
+            historyStack.push(0);
+        }
+
+        var result = keywordSearch(historyStack.peek(), searchterm);
+        if (result == null && historyStack.peek() > 0) { //loop back to beginning
+
+            historyStack.doPurge(); //clear the stack, so not to allow user to go back to the previous loop
+            historyStack.push(0);  
+            result = keywordSearch(historyStack.peek(), searchterm);
         }
 
         if (result == null) {
@@ -98,7 +115,7 @@ function init() {
             
             }
             
-            vue.globalIndex = result.index;
+            historyStack.push(result.index);
         }
     });
 
@@ -185,4 +202,36 @@ function splitStringByKeyword(sourceString, keyword) {
   
     return resultString;
   }
+
+
+
+
+
+
+  const historyStack = {
+    data: [],
   
+    push: function(value) {
+      this.data.push(value);
+    },
+  
+    pop: function() {
+      return this.data.pop();
+    },
+  
+    peek: function() {
+      return this.data[this.data.length - 1];
+    },
+  
+    isEmpty: function() {
+      return this.data.length === 0;
+    },
+
+    doPurge: function() {
+        this.data = [];
+    },
+
+    getSize: function() {
+        return this.data.length;
+    }
+  };

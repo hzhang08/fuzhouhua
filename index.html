@@ -32,9 +32,11 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="#" class="btn btn-primary"><i class="bi-caret-left" style="font-size: 1rem; color: white;"></i></a>
+                        <a href="#" class="btn btn-primary" @click="previous"><i class="bi-caret-left" style="font-size: 1rem; color: white;"></i></a>
                         <!--replay button-->
                         <a href="#" class="btn btn-primary" @click="replay"><i class="bi-arrow-clockwise" style="font-size: 1rem; color: white;"></i></a>
+                        <!--pause button-->
+                        <a href="#" class="btn btn-primary" @click="pause"><i class="bi-pause" style="font-size: 1rem; color: white;"></i></a>
                         <a href="#" class="btn btn-primary" @click="next"><i class="bi-caret-right" style="font-size: 1rem; color: white;"></i></a>
                     </div>
                 </div>
