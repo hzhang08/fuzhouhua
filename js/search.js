@@ -11,7 +11,7 @@ var vue = new Vue({
     },
     methods: {
         search: function() {
-            historyStack.doPurge();
+            indexHistoryStack.doPurge();
             init();
             
         },
@@ -25,15 +25,15 @@ var vue = new Vue({
             init();
         }, 
         previous: function() {
-            if(historyStack.isEmpty() || historyStack.peek() == 0) {
+            if(indexHistoryStack.isEmpty() || indexHistoryStack.peek() == 0) {
               //if the stack is empty or the current index is 0, then there is no previous search
                 return;
             }
-            historyStack.pop(); //pop the current search
-            if(historyStack.isEmpty()) {
+            indexHistoryStack.pop(); //pop the current search
+            if(indexHistoryStack.isEmpty()) {
                 return;
             }
-            historyStack.pop(); //pop the previous search
+            indexHistoryStack.pop(); //pop the previous search
             init();
         },
         pause: function() {
@@ -80,17 +80,17 @@ function init() {
         vue.fuzhou1Json = json;
         let searchterm = document.getElementById("searchbox").value;
 
-        if(historyStack.isEmpty()) {
+        if(indexHistoryStack.isEmpty()) {
             // we want to start searching from 0, so we push -1 to the stack
-            historyStack.push(-1);
+            indexHistoryStack.push(-1);
         }
 
-        var result = keywordSearch(historyStack.peek(), searchterm);
-        if (result == null && historyStack.peek() > 0) { //loop back to beginning
+        var result = keywordSearch(indexHistoryStack.peek(), searchterm);
+        if (result == null && indexHistoryStack.peek() > 0) { //loop back to beginning
 
-            historyStack.doPurge(); //clear the stack, so not to allow user to go back to the previous loop
-            historyStack.push(-1);  
-            result = keywordSearch(historyStack.peek(), searchterm);
+            indexHistoryStack.doPurge(); //clear the stack, so not to allow user to go back to the previous loop
+            indexHistoryStack.push(-1);  
+            result = keywordSearch(indexHistoryStack.peek(), searchterm);
         }
 
         if (result == null) {
@@ -116,7 +116,7 @@ function init() {
             
             }
             
-            historyStack.push(result.index);
+            indexHistoryStack.push(result.index);
         }
     });
 
@@ -212,7 +212,7 @@ function splitStringByKeyword(sourceString, keyword) {
 
 
 
-  const historyStack = {
+  const indexHistoryStack = {
     data: [],
   
     push: function(value) {
