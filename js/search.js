@@ -66,13 +66,6 @@ function onPlayerReady(event) {
 
 
 function init() {
-    // const fs = require('fs');
-
-    // fs.readFile('fuzhou1.json', (err, data) => {
-    //     if (err) throw err;
-    //     fuzhou1Json = JSON.parse(data);
-    //     // console.log(myData.fieldName);
-    // });
 
     fetch('./fuzhou1.json')
     .then((response) => response.json())
@@ -81,15 +74,15 @@ function init() {
         let searchterm = document.getElementById("searchbox").value;
 
         if(indexHistoryStack.isEmpty()) {
-            // we want to start searching from 0, so we push -1 to the stack
-            indexHistoryStack.push(-1);
+            // we want to start searching from 0, so we push 0 to the stack
+            indexHistoryStack.push(0);
         }
 
         var result = keywordSearch(indexHistoryStack.peek(), searchterm);
         if (result == null && indexHistoryStack.peek() > 0) { //loop back to beginning
 
             indexHistoryStack.doPurge(); //clear the stack, so not to allow user to go back to the previous loop
-            indexHistoryStack.push(-1);  
+            indexHistoryStack.push(0);  
             result = keywordSearch(indexHistoryStack.peek(), searchterm);
         }
 
@@ -125,13 +118,14 @@ function init() {
 function keywordSearch (index, keyword) {
 
     //the assumption should be, index is previously searched index, so searching starting from the next index
-    //for initial search, index should be -1, so we start from 0
+    //for initial search, index should be 0, so we start from 0
 
     if(vue.fuzhou1Json == null || vue.fuzhou1Json.length <= index) {
         return null;
     }
 
-    let searchArr = vue.fuzhou1Json.slice(index+1); // slice starting from the index
+    //the index needs to not to be +1, because the .srt index starts from 1, but the array index starts from 0
+    let searchArr = vue.fuzhou1Json.slice(index); // slice starting from the index
 
     for (let i = 0; i < searchArr.length; i++) { // looping through the json array starting from index
         let contentStr = searchArr[i].content; 
