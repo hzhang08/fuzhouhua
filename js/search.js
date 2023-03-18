@@ -6,6 +6,7 @@ var vue = new Vue({
         player: null,
         videoIdExternal: null,
         globalStartSeconds: -1,
+        globalVideoId: null,
         subtitle: null, //deprecating this
         subtitleHtml: null
     },
@@ -17,7 +18,8 @@ var vue = new Vue({
         },
         replay: function() {
             if (vue.globalStartSeconds >= 0) {
-                vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+
+                vue.player.loadVideoById(vue.globalVideoId, vue.globalStartSeconds);
                 vue.player.playVideo();
             }
         },
@@ -59,7 +61,7 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerReady(event) {
 
-    vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+    vue.player.loadVideoById(vue.globalVideoId, vue.globalStartSeconds);
     vue.player.playVideo();
 }
 
@@ -67,7 +69,7 @@ function onPlayerReady(event) {
 
 function init() {
 
-    fetch('./fuzhou1.json')
+    fetch('./subtitles.json')
     .then((response) => response.json())
     .then((json) => {
         vue.fuzhou1Json = json;
@@ -98,13 +100,17 @@ function init() {
 
             vue.globalStartSeconds = convertToSeconds(result.start);
             
+            //be careful because i is lowercase in result.videoid
+            vue.globalVideoId = result.videoid;
+            
             //player.reload
             if (vue.player == null) { //player has not been created
-                vue.videoIdExternal = "zZWsAze9iVI";
+                //be careful because i is lowercase in result.videoid
+                vue.videoIdExternal = result.videoid;
                 generatePlayer();
             } else {//player was not there or was already there
-      
-                vue.player.loadVideoById("zZWsAze9iVI", vue.globalStartSeconds);
+                //be careful because i is lowercase in result.videoid
+                vue.player.loadVideoById(result.videoid, vue.globalStartSeconds);
                 vue.player.playVideo();
             
             }
