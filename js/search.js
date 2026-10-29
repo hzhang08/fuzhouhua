@@ -12,6 +12,7 @@ var vue = new Vue({
     },
     methods: {
         search: function() {
+            if (!document.getElementById("searchbox").value.trim()) return;
             indexHistoryStack.doPurge();
             init();
             
@@ -158,11 +159,12 @@ function generatePlayer() {
 function convertToSeconds(t) {
     let hrs = parseInt(t.split(':')[0], 10);
     let mins = parseInt(t.split(':')[1], 10);
-    let secs = parseInt(t.split(':')[2], 10);
+    let secs = parseFloat(t.split(':')[2].replace(',', '.'));
     return hrs * 3600 + mins * 60 + secs;
 };
 
 function splitStringByKeyword(sourceString, keyword) {
+    if (!keyword) return [{ text: sourceString, isKey: false }];
     let splitArray = [];
     let index = 0;
   
