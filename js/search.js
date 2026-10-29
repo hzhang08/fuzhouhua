@@ -4,6 +4,8 @@ var vue = new Vue({
     data: {
         fuzhou1Json: null,
         player: null,
+        playerReady: false,
+        isPaused: false,
         videoIdExternal: null,
         globalStartSeconds: -1,
         globalVideoId: null,
@@ -39,8 +41,14 @@ var vue = new Vue({
             indexHistoryStack.pop(); //pop the previous search
             init();
         },
-        pause: function() {
-            vue.player.pauseVideo();
+        togglePlayback: function() {
+            if (!vue.playerReady || !vue.player) return;
+            if (vue.isPaused) {
+                vue.player.playVideo();
+            } else {
+                vue.player.pauseVideo();
+            }
+            vue.isPaused = !vue.isPaused;
         }
         
     }
@@ -55,17 +63,21 @@ function onYouTubeIframeAPIReady() {
         'playsinline': 1
         },
         events: {
-            'onReady': onPlayerReady
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
         }
     });
 }
 
 function onPlayerReady(event) {
-
+    vue.playerReady = true;
     vue.player.loadVideoById(vue.globalVideoId, vue.globalStartSeconds);
     vue.player.playVideo();
 }
 
+function onPlayerStateChange(event) {
+    vue.isPaused = event.data === YT.PlayerState.PAUSED;
+}
 
 
 function init() {

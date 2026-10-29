@@ -1,6 +1,6 @@
 # Fuzhouhua
 
-A static Fuzhou speech learning app built with Vue 2, Bootstrap, and the YouTube IFrame API. Search a Chinese word or phrase to hear it in context. Matching text is highlighted; next/previous navigate matches, and replay/pause control playback.
+A static Fuzhou speech learning app built with Vue 2, Bootstrap, and the YouTube IFrame API. Search a Chinese word or phrase to hear it in context. Matching text is highlighted; next/previous navigate matches, and replay/pause control playback. Pause changes to Resume so you can continue from the current position. The button also follows pauses made with YouTube's own controls.
 
 ## Run locally
 

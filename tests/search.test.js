@@ -39,3 +39,41 @@ for (;;) {
 }
 assert.equal(matches.length, rows.filter(r => r.content.includes('福州')).length);
 console.log(`Search, navigation offsets, all imported captions, and fractional timing passed (${rows.length} rows).`);
+
+// Pause/resume must preserve the current position rather than reload the clip.
+const playbackCalls = [];
+context.vue.togglePlayback(); // Safe before the player is created.
+context.vue.player = {
+    pauseVideo() { playbackCalls.push('pause'); },
+    playVideo() { playbackCalls.push('play'); },
+    loadVideoById() { playbackCalls.push('load'); }
+};
+context.vue.togglePlayback(); // Safe while the iframe is still loading.
+assert.deepEqual(playbackCalls, []);
+context.vue.playerReady = true;
+context.vue.togglePlayback();
+assert.equal(context.vue.isPaused, true);
+context.vue.togglePlayback();
+assert.equal(context.vue.isPaused, false);
+assert.deepEqual(playbackCalls, ['pause', 'play']);
+
+// Embedded player controls and new clips keep the custom button synchronized.
+let playerOptions;
+context.YT = {
+    PlayerState: { UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5 },
+    Player: function (element, options) {
+        playerOptions = options;
+        return context.vue.player;
+    }
+};
+context.onYouTubeIframeAPIReady();
+assert.equal(playerOptions.events.onStateChange, context.onPlayerStateChange);
+for (const state of [2, 1, 2, 3, 2, 5, 2, 0, 2, -1]) {
+    playerOptions.events.onStateChange({ data: state });
+    assert.equal(context.vue.isPaused, state === 2);
+}
+context.vue.playerReady = false;
+playerOptions.events.onReady({ target: context.vue.player });
+assert.equal(context.vue.playerReady, true);
+assert.deepEqual(playbackCalls.slice(-2), ['load', 'play']);
+console.log('Pause/resume, readiness guards, and YouTube state synchronization passed.');
