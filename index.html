@@ -21,7 +21,7 @@
                 </div>
                 <div class="row bg-light align-items-center border border-5 border-warning">
                     <div class="input-group">
-                        <input type="text" placeholder="Search" class="form-control" id="searchbox">
+                        <input type="text" placeholder="Search" class="form-control" id="searchbox" @keydown.enter="searchOnEnter">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" @click="search">搜索</button>
                         </div>

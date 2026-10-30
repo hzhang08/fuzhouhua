@@ -13,6 +13,12 @@ var vue = new Vue({
         subtitleHtml: null
     },
     methods: {
+        searchOnEnter: function(event) {
+            // Enter used to confirm Chinese input should not start a search.
+            if (event.isComposing || event.keyCode === 229) return;
+            event.preventDefault();
+            vue.search();
+        },
         search: function() {
             if (!document.getElementById("searchbox").value.trim()) return;
             indexHistoryStack.doPurge();
